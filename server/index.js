@@ -1,4 +1,3 @@
-// server/index.js
 const express = require('express');
 const sqlite3 = require('sqlite3').verbose();
 const cors = require('cors');
@@ -45,7 +44,7 @@ const db = new sqlite3.Database(DB_SOURCE, (err) => {
 
 // === CUSTOMER API ENDPOINTS ===
 
-// 1. POST /api/customers: Create a new customer
+// 1. POST /api/customers: 
 app.post("/api/customers", (req, res) => {
     const { first_name, last_name, phone_number } = req.body;
 
@@ -59,13 +58,13 @@ app.post("/api/customers", (req, res) => {
 
     db.run(sql, params, function(err) {
         if (err) {
-            // Handle specific errors, like a non-unique phone number
+            
             if (err.message.includes("UNIQUE constraint failed")) {
                 return res.status(409).json({ "error": "Phone number already exists." });
             }
             return res.status(400).json({ "error": err.message });
         }
-        // Return the newly created customer with their ID
+        
         res.status(201).json({
             "message": "success",
             "data": { id: this.lastID, ...req.body }
@@ -73,9 +72,8 @@ app.post("/api/customers", (req, res) => {
     });
 });
 
-// 2. GET /api/customers: Get a list of all customers (with searching)
+// 2. GET /api/customers: 
 app.get("/api/customers", (req, res) => {
-    // Basic search by first_name or last_name
     const { search } = req.query;
     
     let sql = "SELECT * FROM customers";
@@ -99,7 +97,7 @@ app.get("/api/customers", (req, res) => {
     });
 });
 
-// 3. GET /api/customers/:id: Get details for a single customer
+// 3. GET /api/customers/:id:
 app.get("/api/customers/:id", (req, res) => {
     const { id } = req.params;
     const sql = "SELECT * FROM customers WHERE id = ?";
@@ -116,7 +114,7 @@ app.get("/api/customers/:id", (req, res) => {
     });
 });
 
-// 4. PUT /api/customers/:id: Update a customer's information
+// 4. PUT /api/customers/:id:
 app.put("/api/customers/:id", (req, res) => {
     const { id } = req.params;
     const { first_name, last_name, phone_number } = req.body;
@@ -149,7 +147,7 @@ app.put("/api/customers/:id", (req, res) => {
     });
 });
 
-// 5. DELETE /api/customers/:id: Delete a customer
+// 5. DELETE /api/customers/:id: 
 app.delete("/api/customers/:id", (req, res) => {
     const { id } = req.params;
     const sql = 'DELETE FROM customers WHERE id = ?';
@@ -166,7 +164,7 @@ app.delete("/api/customers/:id", (req, res) => {
 });
 
 
-// === ADDRESS API ENDPOINTS WILL GO HERE ===
+// === ADDRESS API ENDPOINTS 
 
 
 const PORT = 5000;
@@ -174,14 +172,12 @@ app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });
 
-// === ADDRESS API ENDPOINTS ===
 
-// 1. POST /api/customers/:id/addresses: Add a new address for a specific customer
+// 1. POST /api/customers/:id/addresses: 
 app.post("/api/customers/:id/addresses", (req, res) => {
     const customer_id = req.params.id;
     const { address_details, city, state, pin_code } = req.body;
 
-    // Server-side validation
     if (!address_details || !city || !state || !pin_code) {
         return res.status(400).json({ "error": "Missing required address fields" });
     }
@@ -200,7 +196,7 @@ app.post("/api/customers/:id/addresses", (req, res) => {
     });
 });
 
-// 2. GET /api/customers/:id/addresses: Get all addresses for a specific customer
+// 2. GET /api/customers/:id/addresses: 
 app.get("/api/customers/:id/addresses", (req, res) => {
     const customer_id = req.params.id;
     const sql = "SELECT * FROM addresses WHERE customer_id = ?";
@@ -216,7 +212,7 @@ app.get("/api/customers/:id/addresses", (req, res) => {
     });
 });
 
-// 3. PUT /api/addresses/:addressId: Update a specific address
+// 3. PUT /api/addresses/:addressId: 
 app.put("/api/addresses/:addressId", (req, res) => {
     const { addressId } = req.params;
     const { address_details, city, state, pin_code } = req.body;
@@ -247,7 +243,7 @@ app.put("/api/addresses/:addressId", (req, res) => {
     });
 });
 
-// 4. DELETE /api/addresses/:addressId: Delete a specific address
+// 4. DELETE /api/addresses/:addressId: 
 app.delete("/api/addresses/:addressId", (req, res) => {
     const { addressId } = req.params;
     const sql = 'DELETE FROM addresses WHERE id = ?';
@@ -263,7 +259,7 @@ app.delete("/api/addresses/:addressId", (req, res) => {
     });
 });
 
-// GET /api/addresses/:addressId: Get a single address by its ID
+// GET /api/addresses/:addressId: 
 app.get("/api/addresses/:addressId", (req, res) => {
     const { addressId } = req.params;
     const sql = "SELECT * FROM addresses WHERE id = ?";
