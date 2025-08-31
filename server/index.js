@@ -262,3 +262,21 @@ app.delete("/api/addresses/:addressId", (req, res) => {
         res.json({ "message": `Address ${addressId} deleted`, "changes": this.changes });
     });
 });
+
+// GET /api/addresses/:addressId: Get a single address by its ID
+app.get("/api/addresses/:addressId", (req, res) => {
+    const { addressId } = req.params;
+    const sql = "SELECT * FROM addresses WHERE id = ?";
+    
+    db.get(sql, [addressId], (err, row) => {
+        if (err) {
+            return res.status(400).json({ "error": err.message });
+        }
+        if (row) {
+            res.json({ "message": "success", "data": row });
+        } else {
+            res.status(404).json({ "error": "Address not found" });
+        }
+    });
+});
+
